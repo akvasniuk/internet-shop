@@ -1,22 +1,17 @@
 import { io } from "https://cdn.socket.io/4.8.3/socket.io.esm.min.js";
 
-import { API_URL } from "./constants.js";
-import { showAlert } from "./toast.js";
-import { authFetch } from "./api.js";
-import { isTokenExpired } from "./tokenExpiration.js";
+import { requireAuth } from "../utils/authGuard.js";
+import { showAlert } from "../utils/toast.js";
+import { API_URL } from "../utils/api.js";
+import {
+  fetchUserConversations,
+  initConversationWithUser,
+  fetchConversationMessages,
+} from "./chatService.js";
 
-const token = localStorage.getItem("accessToken");
-const currentUser = JSON.parse(localStorage.getItem("user") || "null");
-
-if (!token || !currentUser || isTokenExpired(token)) {
-  showAlert("Please log in to access the support chat.", "warning");
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 1500);
-}
-
-const isAdmin = currentUser.role === "ADMIN";
-
+let socket = null;
+let currentUser = null;
+let isAdmin = false;
 let activeConversationId = null;
 
 const onlineAdminsContainer = document.querySelector("#onlineAdminsList");
@@ -32,40 +27,9 @@ const chatInput = document.querySelector("#chatInput");
 const currentChatAvatar = document.querySelector("#currentChatAvatar");
 const currentChatUserName = document.querySelector("#currentChatUserName");
 
-const socket = io(API_URL, {
-  auth: {
-    token: token,
-  },
-});
-
-socket.on("connect", () => {
-  console.log("Connected to WebSocket server");
-});
-
-socket.on("online_admins_updated", (admins) => {
-  renderOnlineAdmins(admins);
-});
-
-socket.on("receive_message", (message) => {
-  if (message.conversationId === activeConversationId) {
-    renderMessage(message);
-  }
-
-  loadUserConversations();
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadUserConversations();
-  setupFormListener();
-});
-
 async function loadUserConversations() {
   try {
-    const res = await authFetch(`${API_URL}/chat/conversations`);
-
-    if (!res.ok) throw new Error("Failed to load conversations");
-
-    const { conversations } = await res.json();
+    const conversations = await fetchUserConversations();
     renderConversationsList(conversations);
   } catch (error) {
     showAlert(error.message, "danger");
@@ -78,14 +42,7 @@ async function openChatWithUser(
   targetUserName = "Administrator",
 ) {
   try {
-    const res = await authFetch(`${API_URL}/chat/conversation`, {
-      method: "POST",
-      body: JSON.stringify({ targetUserId }),
-    });
-
-    if (!res.ok) throw new Error("Could not initialize chat");
-
-    const { conversation } = await res.json();
+    const conversation = await initConversationWithUser(targetUserId);
     await selectConversation(conversation._id, targetUserName);
     await loadUserConversations();
   } catch (error) {
@@ -101,11 +58,13 @@ async function selectConversation(conversationId, interlocutorName) {
   activeConversationId = conversationId;
   socket.emit("join_conversation", activeConversationId);
 
-  noChatSelectedScreen.classList.add("d-none");
-  activeChatScreen.classList.remove("d-none");
+  noChatSelectedScreen?.classList.add("d-none");
+  activeChatScreen?.classList.remove("d-none");
 
-  currentChatUserName.textContent = interlocutorName;
-  currentChatAvatar.textContent = (interlocutorName[0] || "A").toUpperCase();
+  if (currentChatUserName) currentChatUserName.textContent = interlocutorName;
+  if (currentChatAvatar) {
+    currentChatAvatar.textContent = (interlocutorName[0] || "A").toUpperCase();
+  }
 
   document.querySelectorAll(".conversation-item").forEach((el) => {
     el.classList.toggle("active", el.dataset.id === conversationId);
@@ -116,11 +75,8 @@ async function selectConversation(conversationId, interlocutorName) {
 
 async function loadMessagesHistory(conversationId) {
   try {
-    const res = await authFetch(`${API_URL}/chat/messages/${conversationId}`);
-
-    if (!res.ok) throw new Error("Failed to fetch messages");
-
-    const { messages } = await res.json();
+    const messages = await fetchConversationMessages(conversationId);
+    if (!chatMessagesList) return;
     chatMessagesList.innerHTML = "";
 
     if (messages.length === 0) {
@@ -139,7 +95,7 @@ async function loadMessagesHistory(conversationId) {
 }
 
 function setupFormListener() {
-  chatForm.addEventListener("submit", (e) => {
+  chatForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     const text = chatInput.value.trim();
 
@@ -156,6 +112,7 @@ function setupFormListener() {
 }
 
 function renderMessage(msg) {
+  if (!chatMessagesList) return;
   const emptyPlaceholder = chatMessagesList.querySelector(".text-center");
   if (emptyPlaceholder) emptyPlaceholder.remove();
 
@@ -171,7 +128,9 @@ function renderMessage(msg) {
 
   const msgHtml = `
     <div class="d-flex mb-2 ${isMine ? "justify-content-end" : "justify-content-start"}">
-      <div class="p-2 px-3 rounded-3 shadow-sm ${isMine ? "bg-primary text-white" : "bg-white text-dark border"}" style="max-width: 75%;">
+      <div class="p-2 px-3 rounded-3 shadow-sm ${
+        isMine ? "bg-primary text-white" : "bg-white text-dark border"
+      }" style="max-width: 75%;">
         <div class="d-flex justify-content-between align-items-center gap-3 mb-1">
           <small class="fw-bold ${isMine ? "text-white-50" : "text-muted"}" style="font-size: 0.7rem;">${senderName}</small>
           <small class="${isMine ? "text-white-50" : "text-muted"}" style="font-size: 0.65rem;">${time}</small>
@@ -186,6 +145,8 @@ function renderMessage(msg) {
 }
 
 function renderOnlineAdmins(admins) {
+  if (!onlineAdminsContainer) return;
+
   if (!admins || admins.length === 0) {
     onlineAdminsContainer.innerHTML = `<small class="text-muted fst-italic py-1">No admins currently online</small>`;
     return;
@@ -220,7 +181,11 @@ function renderOnlineAdmins(admins) {
 }
 
 function renderConversationsList(conversations) {
-  conversationCountBadge.textContent = conversations.length || 0;
+  if (conversationCountBadge) {
+    conversationCountBadge.textContent = conversations.length || 0;
+  }
+
+  if (!conversationsContainer) return;
 
   if (!conversations || conversations.length === 0) {
     conversationsContainer.innerHTML = `
@@ -237,15 +202,19 @@ function renderConversationsList(conversations) {
   }
 
   if (isAdmin) {
-    document.querySelector("#supportAdmins").textContent = "Online Colleagues";
-    document.querySelector("#chooseAdmin").textContent =
-      "Select a client inquiry from the left panel to start assisting them.";
+    const supportAdminsTitle = document.querySelector("#supportAdmins");
+    const chooseAdminText = document.querySelector("#chooseAdmin");
+    if (supportAdminsTitle)
+      supportAdminsTitle.textContent = "Online Colleagues";
+    if (chooseAdminText) {
+      chooseAdminText.textContent =
+        "Select a client inquiry from the left panel to start assisting them.";
+    }
   }
 
   conversationsContainer.innerHTML = conversations
     .map((conv) => {
-      const interlocutor =
-        currentUser.role === "ADMIN" ? conv.client : conv.admin;
+      const interlocutor = isAdmin ? conv.client : conv.admin;
       const interlocutorName = interlocutor
         ? `${interlocutor.firstname || "User"} ${interlocutor.lastname || ""}`.trim()
         : "Administrator";
@@ -253,20 +222,20 @@ function renderConversationsList(conversations) {
       const isActive = conv._id === activeConversationId ? "active" : "";
 
       return `
-      <div class="conversation-item p-3 border-bottom d-flex align-items-center gap-3 ${isActive}" data-id="${conv._id}" data-name="${interlocutorName}">
-        <div class="bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center fw-bold text-secondary flex-shrink-0" style="width: 40px; height: 40px;">
-          ${(interlocutorName[0] || "U").toUpperCase()}
-        </div>
-        <div class="flex-grow-1 overflow-hidden">
-          <div class="d-flex justify-content-between align-items-center mb-1">
-            <h6 class="mb-0 text-truncate small fw-bold text-dark">${interlocutorName}</h6>
+        <div class="conversation-item p-3 border-bottom d-flex align-items-center gap-3 ${isActive}" data-id="${conv._id}" data-name="${interlocutorName}">
+          <div class="bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center fw-bold text-secondary flex-shrink-0" style="width: 40px; height: 40px;">
+            ${(interlocutorName[0] || "U").toUpperCase()}
           </div>
-          <p class="mb-0 text-truncate text-secondary small" style="font-size: 0.8rem;">
-            ${conv.lastMessage || "No messages yet"}
-          </p>
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <h6 class="mb-0 text-truncate small fw-bold text-dark">${interlocutorName}</h6>
+            </div>
+            <p class="mb-0 text-truncate text-secondary small" style="font-size: 0.8rem;">
+              ${conv.lastMessage || "No messages yet"}
+            </p>
+          </div>
         </div>
-      </div>
-    `;
+      `;
     })
     .join("");
 
@@ -278,3 +247,40 @@ function renderConversationsList(conversations) {
       });
     });
 }
+
+function initSocket(token) {
+  socket = io(API_URL, {
+    auth: { token },
+  });
+
+  socket.on("connect", () => {
+    console.log("Connected to WebSocket server");
+  });
+
+  socket.on("online_admins_updated", (admins) => {
+    renderOnlineAdmins(admins);
+  });
+
+  socket.on("receive_message", (message) => {
+    if (message.conversationId === activeConversationId) {
+      renderMessage(message);
+    }
+    loadUserConversations();
+  });
+}
+
+async function init() {
+  const auth = requireAuth();
+  if (!auth) {
+    return;
+  }
+
+  currentUser = auth.user;
+  isAdmin = currentUser.role === "ADMIN";
+
+  initSocket(auth.token);
+  setupFormListener();
+  await loadUserConversations();
+}
+
+init();

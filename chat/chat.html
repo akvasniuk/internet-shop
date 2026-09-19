@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Shopping Assistant | ElectroShop</title>
+    <title>Support Chat | ElectroShop</title>
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -16,26 +16,24 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
-    <link rel="stylesheet" href="chatAI.css" />
+
+    <link rel="stylesheet" href="chat.css">
   </head>
+
   <body class="bg-light">
-    <header class="bg-white border-bottom py-2 mb-3 shadow-sm">
+    <header class="bg-white border-bottom py-2 mb-3">
       <div
         class="container-fluid px-4 d-flex justify-content-between align-items-center"
       >
         <a
-          href="index.html"
+          href="../index.html"
           class="text-decoration-none fw-bold fs-5 text-dark d-flex align-items-center"
         >
-          <i class="bi bi-robot text-primary me-2 fs-4"></i>ElectroBot AI
-          Assistant
+          <i class="bi bi-cpu text-primary me-2 fs-4"></i>ElectroShop Support
         </a>
         <div class="d-flex align-items-center gap-2">
-          <a href="chat.html" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-headset me-1"></i> Human Support
-          </a>
-          <a href="index.html" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i> Store
+          <a href="../index.html" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Store
           </a>
         </div>
       </div>
@@ -50,32 +48,46 @@
             class="col-12 col-md-4 col-lg-3 border-end d-flex flex-column h-100 bg-white"
           >
             <div class="p-3 border-bottom">
-              <button
-                id="btnNewChat"
-                class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill shadow-sm"
+              <span
+                class="text-uppercase text-muted fw-bold small d-block mb-2"
+                style="font-size: 0.75rem"
+                id="supportAdmins"
               >
-                <i class="bi bi-plus-lg"></i> New AI Chat
-              </button>
+                Online Support Admins
+              </span>
+              <div
+                id="onlineAdminsList"
+                class="d-flex gap-2 overflow-x-auto pb-1"
+                style="scrollbar-width: none"
+              >
+                <small class="text-muted fst-italic"
+                  >No admins currently online</small
+                >
+              </div>
             </div>
 
             <div
               class="p-3 pb-2 border-bottom bg-light d-flex justify-content-between align-items-center"
             >
-              <span class="fw-semibold small text-dark">Your Chats</span>
-              <span class="badge bg-secondary rounded-pill" id="chatCountBadge"
+              <span class="fw-semibold small text-dark">Conversations</span>
+              <span class="badge bg-primary rounded-pill" id="conversationCount"
                 >0</span
               >
             </div>
 
-            <div class="flex-grow-1 chat-scroll" id="aiConversationsContainer">
+            <div
+              class="flex-grow-1 chat-scroll"
+              id="conversationsListContainer"
+            >
               <div
                 class="text-center text-muted py-5 small"
-                id="noChatsPlaceholder"
+                id="noConversationsText"
               >
                 <i
                   class="bi bi-chat-square-dots fs-3 d-block mb-2 text-secondary"
                 ></i>
-                No chats yet. Click <strong>"New AI Chat"</strong> to start!
+                No previous conversations yet. Select an admin above to start
+                chatting!
               </div>
             </div>
           </div>
@@ -84,48 +96,45 @@
             class="col-12 col-md-8 col-lg-9 d-flex flex-column h-100 bg-white"
           >
             <div
-              id="noChatSelectedView"
+              id="noChatSelectedScreen"
               class="h-100 d-flex flex-column align-items-center justify-content-center text-muted p-4"
             >
-              <i class="bi bi-robot fs-1 mb-3 text-primary opacity-50"></i>
-              <h5 class="fw-bold text-dark">ElectroBot AI Assistant</h5>
+              <i class="bi bi-chat-heart fs-1 mb-3 text-primary opacity-50"></i>
+              <h5 class="fw-bold text-dark">Welcome to Support</h5>
               <p
                 class="small text-center text-secondary"
-                style="max-width: 400px"
+                style="max-width: 380px"
+                id="chooseAdmin"
               >
-                Ask about laptops, smartphones, delivery times, or warranty
-                terms. Select an existing chat or create a new one to begin.
+                Choose an online administrator or an existing conversation from
+                the left panel to begin.
               </p>
-              <button
-                id="btnStartPrompt"
-                class="btn btn-outline-primary btn-sm rounded-pill px-3"
-              >
-                <i class="bi bi-chat-dots me-1"></i> Start a Conversation
-              </button>
             </div>
 
-            <div id="activeChatView" class="d-none d-flex flex-column h-100">
+            <div id="activeChatScreen" class="d-none d-flex flex-column h-100">
               <div
                 class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white"
               >
                 <div class="d-flex align-items-center gap-3">
-                  <div
-                    class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm"
-                    style="width: 40px; height: 40px"
-                  >
-                    <i class="bi bi-robot"></i>
+                  <div class="position-relative">
+                    <div
+                      class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                      style="width: 42px; height: 42px"
+                      id="currentChatAvatar"
+                    >
+                      A
+                    </div>
                   </div>
                   <div>
-                    <h6
-                      class="mb-0 fw-bold text-dark text-truncate"
-                      style="max-width: 350px"
-                      id="activeChatHeaderTitle"
-                    >
-                      New Chat
+                    <h6 class="mb-0 fw-bold text-dark" id="currentChatUserName">
+                      Administrator
                     </h6>
-                    <small class="text-success d-flex align-items-center gap-1">
+                    <small
+                      class="text-success d-flex align-items-center gap-1"
+                      id="currentChatStatus"
+                    >
                       <span class="badge rounded-pill bg-success p-1"></span>
-                      Online (24/7 AI)
+                      Active Session
                     </small>
                   </div>
                 </div>
@@ -133,22 +142,21 @@
 
               <div
                 class="flex-grow-1 p-3 chat-scroll bg-light d-flex flex-column gap-2"
-                id="aiMessagesList"
+                id="chatMessagesList"
               ></div>
 
               <div class="p-3 border-top bg-white">
-                <form id="aiChatForm" class="d-flex gap-2 align-items-center">
+                <form id="chatForm" class="d-flex gap-2 align-items-center">
                   <input
                     type="text"
-                    id="aiChatInput"
+                    id="chatInput"
                     class="form-control rounded-pill px-3"
-                    placeholder="Ask about product specs, delivery, or returns..."
+                    placeholder="Type your message here..."
                     autocomplete="off"
                     required
                   />
                   <button
                     type="submit"
-                    id="btnSubmit"
                     class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                     style="width: 42px; height: 42px; flex-shrink: 0"
                   >
@@ -173,7 +181,6 @@
       crossorigin="anonymous"
     ></script>
 
-    <script type="module" src="chatAI.js"></script>
+    <script type="module" src="chat.js"></script>
   </body>
 </html>
-l

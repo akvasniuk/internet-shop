@@ -1,25 +1,18 @@
-import { authFetch } from "./api.js";
-import { API_URL } from "./constants.js";
-import { showAlert } from "./toast.js";
-import { isTokenExpired } from "./tokenExpiration.js";
-
-const token = localStorage.getItem("accessToken");
-const currentUser = JSON.parse(localStorage.getItem("user") || "null");
-
-if (!token || !currentUser || isTokenExpired(token)) {
-  showAlert("Please log in to chat with the AI assistant.", "warning");
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 1200);
-}
+import { requireAuth } from "../utils/authGuard.js";
+import { showAlert } from "../utils/toast.js";
+import {
+  fetchAiConversations,
+  createAiConversation,
+  fetchAiConversationById,
+  sendAiChatMessage,
+  deleteAiConversation,
+} from "./aiChatService.js";
 
 let activeConversationId = null;
 
 const btnNewChat = document.querySelector("#btnNewChat");
 const btnStartPrompt = document.querySelector("#btnStartPrompt");
-const aiConversationsContainer = document.querySelector(
-  "#aiConversationsContainer",
-);
+const aiConversationsContainer = document.querySelector("#aiConversationsContainer");
 const chatCountBadge = document.querySelector("#chatCountBadge");
 const noChatSelectedView = document.querySelector("#noChatSelectedView");
 const activeChatView = document.querySelector("#activeChatView");
@@ -29,21 +22,9 @@ const aiChatForm = document.querySelector("#aiChatForm");
 const aiChatInput = document.querySelector("#aiChatInput");
 const btnSubmit = document.querySelector("#btnSubmit");
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadConversationsList();
-
-  btnNewChat.addEventListener("click", handleCreateNewChat);
-  btnStartPrompt.addEventListener("click", handleCreateNewChat);
-  aiChatForm.addEventListener("submit", handleSendMessage);
-});
-
 async function loadConversationsList() {
   try {
-    const res = await authFetch(`${API_URL}/chat/ai/conversations`);
-
-    if (!res.ok) throw new Error("Failed to load conversations");
-
-    const { conversations } = await res.json();
+    const conversations = await fetchAiConversations();
     renderConversationsSidebar(conversations);
   } catch (error) {
     console.error("loadConversationsList Error:", error);
@@ -53,14 +34,7 @@ async function loadConversationsList() {
 
 async function handleCreateNewChat() {
   try {
-    const res = await authFetch(`${API_URL}/chat/ai/conversations`, {
-      method: "POST",
-      body: JSON.stringify({ title: "New Chat" }),
-    });
-
-    if (!res.ok) throw new Error("Failed to create chat");
-
-    const { newChat } = await res.json();
+    const newChat = await createAiConversation("New Chat");
     await loadConversationsList();
     await selectChat(newChat._id, newChat.title);
   } catch (error) {
@@ -71,22 +45,19 @@ async function handleCreateNewChat() {
 async function selectChat(conversationId, title) {
   activeConversationId = conversationId;
 
-  noChatSelectedView.classList.add("d-none");
-  activeChatView.classList.remove("d-none");
-  activeChatHeaderTitle.textContent = title || "ElectroBot Chat";
+  noChatSelectedView?.classList.add("d-none");
+  activeChatView?.classList.remove("d-none");
+  if (activeChatHeaderTitle) {
+    activeChatHeaderTitle.textContent = title || "ElectroBot Chat";
+  }
 
   document.querySelectorAll(".conversation-item").forEach((el) => {
     el.classList.toggle("active", el.dataset.id === conversationId);
   });
 
   try {
-    const res = await authFetch(
-      `${API_URL}/chat/ai/conversations/${conversationId}`,
-    );
-
-    if (!res.ok) throw new Error("Failed to load chat history");
-
-    const { conversation } = await res.json();
+    const conversation = await fetchAiConversationById(conversationId);
+    if (!aiMessagesList) return;
     aiMessagesList.innerHTML = "";
 
     if (!conversation.messages || conversation.messages.length === 0) {
@@ -140,20 +111,10 @@ async function handleSendMessage(e) {
   aiMessagesList.scrollTop = aiMessagesList.scrollHeight;
 
   try {
-    const res = await authFetch(`${API_URL}/chat/ai/message`, {
-      method: "POST",
-      body: JSON.stringify({
-        conversationId: activeConversationId,
-        prompt: text,
-      }),
-    });
-
-    const data = await res.json();
+    const data = await sendAiChatMessage(activeConversationId, text);
     document.querySelector("#aiTypingIndicator")?.remove();
 
-    if (!res.ok) throw new Error(data.message || "AI response failed");
-
-    if (data.conversationTitle) {
+    if (data.conversationTitle && activeChatHeaderTitle) {
       activeChatHeaderTitle.textContent = data.conversationTitle;
     }
 
@@ -165,7 +126,7 @@ async function handleSendMessage(e) {
 
     await loadConversationsList();
   } catch (err) {
-    document.querySelector("#aiTypingIndicator").remove();
+    document.querySelector("#aiTypingIndicator")?.remove();
     renderSingleMessage({
       role: "model",
       text: "⚠️ Sorry, I could not process your request. Please try again.",
@@ -182,19 +143,12 @@ async function handleDeleteChat(conversationId) {
   if (!confirm("Are you sure you want to delete this chat?")) return;
 
   try {
-    const res = await authFetch(
-      `${API_URL}/chat/ai/conversations/${conversationId}`,
-      {
-        method: "DELETE",
-      },
-    );
-
-    if (!res.ok) throw new Error("Failed to delete chat");
+    await deleteAiConversation(conversationId);
 
     if (activeConversationId === conversationId) {
       activeConversationId = null;
-      activeChatView.classList.add("d-none");
-      noChatSelectedView.classList.remove("d-none");
+      activeChatView?.classList.add("d-none");
+      noChatSelectedView?.classList.remove("d-none");
     }
 
     await loadConversationsList();
@@ -204,7 +158,11 @@ async function handleDeleteChat(conversationId) {
 }
 
 function renderConversationsSidebar(chats) {
-  chatCountBadge.textContent = chats.length || 0;
+  if (chatCountBadge) {
+    chatCountBadge.textContent = chats.length || 0;
+  }
+
+  if (!aiConversationsContainer) return;
 
   if (!chats || chats.length === 0) {
     aiConversationsContainer.innerHTML = `
@@ -215,6 +173,7 @@ function renderConversationsSidebar(chats) {
     `;
     return;
   }
+
   aiConversationsContainer.innerHTML = chats
     .map((chat) => {
       const isActive = chat._id === activeConversationId ? "active" : "";
@@ -254,6 +213,8 @@ function renderConversationsSidebar(chats) {
 }
 
 function renderSingleMessage(msg) {
+  if (!aiMessagesList) return;
+
   const isUser = msg.role === "user";
   const time = msg.createdAt
     ? new Date(msg.createdAt).toLocaleTimeString([], {
@@ -264,7 +225,9 @@ function renderSingleMessage(msg) {
 
   const html = `
     <div class="d-flex mb-2 ${isUser ? "justify-content-end" : "justify-content-start"}">
-      <div class="p-3 rounded-3 shadow-sm ${isUser ? "bg-primary text-white" : "bg-white text-dark border"}" style="max-width: 75%;">
+      <div class="p-3 rounded-3 shadow-sm ${
+        isUser ? "bg-primary text-white" : "bg-white text-dark border"
+      }" style="max-width: 75%;">
         <div class="d-flex justify-content-between align-items-center gap-3 mb-1">
           <small class="fw-bold ${isUser ? "text-white-50" : "text-primary"}" style="font-size: 0.75rem;">
             ${isUser ? "You" : "ElectroBot (AI)"}
@@ -279,3 +242,21 @@ function renderSingleMessage(msg) {
   aiMessagesList.insertAdjacentHTML("beforeend", html);
   aiMessagesList.scrollTop = aiMessagesList.scrollHeight;
 }
+
+function setupEventListeners() {
+  btnNewChat?.addEventListener("click", handleCreateNewChat);
+  btnStartPrompt?.addEventListener("click", handleCreateNewChat);
+  aiChatForm?.addEventListener("submit", handleSendMessage);
+}
+
+async function init() {
+  const auth = requireAuth();
+  if (!auth) {
+    return;
+  }
+
+  setupEventListeners();
+  await loadConversationsList();
+}
+
+init();

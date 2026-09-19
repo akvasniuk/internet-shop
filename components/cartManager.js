@@ -225,11 +225,16 @@ export function initCart(elements) {
         "You need to log in to place an order. Go to the login page?",
       );
       if (shouldLogin) {
-        window.location.href = "login/login.html";
+        window.location.href.includes("product-details")
+          ? (window.location.href = "../login/login.html")
+          : (window.location.href = "login/login.html");
       }
       return;
     }
-    window.location.href = "checkout/checkout.html";
+
+    window.location.href.includes("product-details")
+      ? (window.location.href = "../checkout/checkout.html")
+      : (window.location.href = "checkout/checkout.html");
   });
 
   loadFromStorage();

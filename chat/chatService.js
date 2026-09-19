@@ -1,4 +1,3 @@
-// services/chatService.js
 import { API_URL, authFetch } from "../utils/api.js";
 
 export async function fetchUserConversations() {

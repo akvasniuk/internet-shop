@@ -45,7 +45,7 @@ A modern full-featured e-commerce web application featuring a client-side storef
 
 ### Backend
 
-- **Node.js & Express.js** — REST API server
+- **Node.js** — REST API server
 - **Socket.io** — Real-time WebSocket server for live support
 - **Google Gemini API (`@google/genai`)** — Conversational AI integration
 - **JWT (JSON Web Tokens)** — Secure stateless session management

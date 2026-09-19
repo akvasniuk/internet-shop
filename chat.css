@@ -1,0 +1,24 @@
+.chat-app-height {
+  height: calc(100vh - 120px);
+  min-height: 520px;
+}
+.chat-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.conversation-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+.conversation-item.active {
+  background-color: #e9ecef;
+}
+.admin-status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #198754;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  bottom: 0;
+  right: 0;
+}

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internet Shop</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-light">
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm"
+    >
+      <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold" href="index.html">
+          <i class="bi bi-cpu text-primary me-2"></i>ElectroShop
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarContent"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <div class="d-flex mx-auto my-3 my-lg-0 col-12 col-lg-6 col-xl-5">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search products by title, brand or category..."
+                id="searchInput"
+              />
+              <button class="btn btn-primary" type="button" id="searchBtn">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <button
+              class="btn btn-warning position-relative d-flex align-items-center gap-1 me-2"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#cartOffcanvas"
+              aria-controls="cartOffcanvas"
+              id="openCart"
+            >
+              <i class="bi bi-cart3 fs-6"></i>
+              <span class="d-none d-sm-inline">Cart</span>
+              <span
+                id="cartBadge"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              >
+                0
+              </span>
+            </button>
+
+            <div id="authNav" class="d-flex align-items-center gap-2">
+              <a
+                href="login.html"
+                class="btn btn-outline-light d-flex align-items-center gap-1"
+              >
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Sign In</span>
+              </a>
+              <a
+                href="register.html"
+                class="btn btn-primary d-flex align-items-center gap-1"
+              >
+                <i class="bi bi-person-plus"></i>
+                <span>Register</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid px-4 my-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div
+          class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small">Total items:</span>
+            <span class="badge bg-secondary" id="productCount">0</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <label for="sortSelect" class="small text-muted text-nowrap"
+              >Sort by:</label
+            >
+            <select
+              class="form-select form-select-sm"
+              id="sortSelect"
+              style="width: auto"
+            >
+              <option value="price-asc">Price (Low to High)</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="rating-desc">Top Rated</option>
+              <option value="stock-desc">Stock (Highest)</option>
+              <option value="stock-asc">Stock (Lowest)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4"
+        id="productsGrid"
+      ></div>
+
+      <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center" id="pagination"></ul>
+      </nav>
+    </main>
+
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="cartOffcanvas"
+      aria-labelledby="cartOffcanvasLabel"
+    >
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold" id="cartOffcanvasLabel">
+          <i class="bi bi-bag-check me-2 text-primary"></i>Shopping Cart
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="offcanvas-body d-flex flex-column justify-content-between">
+        <div id="cartItemsList" class="flex-grow-1 overflow-auto">
+          <div class="text-center text-muted py-5" id="emptyCartMessage">
+            <i class="bi bi-cart-x fs-1 d-block mb-2"></i>
+            <p>Your cart is currently empty.</p>
+          </div>
+        </div>
+
+        <div class="border-top pt-3 mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="fw-semibold">Total:</span>
+            <span class="fs-5 fw-bold text-primary" id="cartTotalPrice"
+              >$0.00</span
+            >
+          </div>
+          <button
+            class="btn btn-success w-100 py-2 fw-semibold"
+            id="checkoutBtn"
+            disabled
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 1100"
+    ></div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" src="index.js"></script>
+  </body>
+</html>

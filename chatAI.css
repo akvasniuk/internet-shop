@@ -1,0 +1,19 @@
+.chat-app-height {
+  height: calc(100vh - 120px);
+  min-height: 540px;
+}
+.chat-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.conversation-item {
+  transition: background-color 0.15s ease-in-out;
+}
+.conversation-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+.conversation-item.active {
+  background-color: #e9ecef;
+  border-left: 4px solid #0d6efd;
+}

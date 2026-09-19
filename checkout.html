@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | Placing an order</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <header class="bg-white border-bottom py-3 mb-4">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          href="index.html"
+          class="text-decoration-none text-dark d-inline-flex align-items-center gap-2"
+        >
+          <i class="bi bi-cpu fs-2 text-primary"></i>
+          <span class="h3 fw-bold mb-0">ElectroShop</span>
+        </a>
+        <a href="index.html" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Return to shopping
+        </a>
+      </div>
+    </header>
+
+    <main class="container mb-5">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm rounded-3 p-4">
+            <h4 class="fw-bold mb-4">
+              <i class="bi bi-truck text-primary me-2"></i>Arranging delivery
+            </h4>
+
+            <form id="checkoutForm">
+              <h6 class="fw-semibold text-muted text-uppercase small mb-3">
+                1. Contact details
+              </h6>
+              <div class="row g-2 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Name</label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    class="form-control"
+                    id="orderFirstName"
+                    required
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Surname</label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    class="form-control"
+                    id="orderLastName"
+                    required
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    class="form-control"
+                    id="orderPhone"
+                    placeholder="+380..."
+                    required
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    id="orderEmail"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <hr class="my-4" />
+
+              <h6 class="fw-semibold text-muted text-uppercase small mb-3">
+                2. Pickup address
+              </h6>
+              <div class="row g-2 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">City</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="orderCity"
+                    name="city"
+                    placeholder="Ivano-Frankivsk"
+                    required
+                  />
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold"
+                    >Delivery Service</label
+                  >
+                  <select
+                    name="deliveryService"
+                    class="form-select"
+                    id="deliveryService"
+                  >
+                    <option value="mail">Post Office (Branch)</option>
+                    <option value="courier">
+                      Courier delivery to the address
+                    </option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-semibold"
+                    >Branch number or address</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="orderAddress"
+                    name="address"
+                    placeholder="Branch No. 1 or 10 Shevchenka St."
+                    required
+                  />
+                </div>
+              </div>
+
+              <hr class="my-4" />
+
+              <h6 class="fw-semibold text-muted text-uppercase small mb-3">
+                3. Payment
+              </h6>
+              <div class="mb-4">
+                <div class="form-check mb-2">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="payOnline"
+                    value="card"
+                    checked
+                  />
+                  <label class="form-check-label" for="payOnline">
+                    <i class="bi bi-credit-card me-1"></i> Online card payment
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="payCash"
+                    value="cash"
+                  />
+                  <label class="form-check-label" for="payCash">
+                    <i class="bi bi-cash-stack me-1"></i> Payment upon receipt
+                    (cash on delivery)
+                  </label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-success btn-lg w-100 fw-bold shadow-sm"
+                id="submitOrderBtn"
+              >
+                Confirm order
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div
+            class="card border-0 shadow-sm rounded-3 p-4 sticky-top"
+            style="top: 20px"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Your order</h5>
+              <span
+                class="badge bg-primary rounded-pill px-3 py-2"
+                id="summaryItemsCount"
+                >0 pcs.</span
+              >
+            </div>
+
+            <div
+              id="checkoutItemsList"
+              class="overflow-auto pe-1 mb-3"
+              style="max-height: 320px"
+            ></div>
+
+            <hr class="my-2" />
+
+            <div class="d-flex justify-content-between py-1">
+              <span class="text-muted">Cost of goods:</span>
+              <span class="fw-semibold" id="checkoutSubtotal">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between py-1">
+              <span class="text-muted">Вelivery:</span>
+              <span class="text-success fw-semibold"
+                >According to the carrier's tariffs</span
+              >
+            </div>
+
+            <hr class="my-2" />
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="fs-5 fw-bold">Amount due:</span>
+              <span class="fs-4 fw-bold text-primary" id="checkoutTotalAmount"
+                >$0.00</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 1100"
+    ></div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" src="checkout.js"></script>
+  </body>
+</html>

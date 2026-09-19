@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders | ElectroShop</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+   
+    <header class="bg-white border-bottom py-3 mb-4">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          href="index.html"
+          class="text-decoration-none fw-bold fs-4 text-dark"
+        >
+          <i class="bi bi-cpu text-primary me-2"></i>ElectroShop
+        </a>
+        <div class="d-flex gap-2">
+          <a href="profile.html" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-person me-1"></i> Profile
+          </a>
+          <a href="index.html" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Go to shopping
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container my-4" style="max-width: 860px">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0">
+          <i class="bi bi-box-seam text-primary me-2"></i>Order history
+        </h3>
+        <span
+          class="badge bg-secondary rounded-pill px-3 py-2"
+          id="ordersCountBadge"
+          >0 orders</span
+        >
+      </div>
+
+      <div id="ordersContainer">
+        <div class="text-center py-5" id="ordersLoading">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="text-muted mt-2">Loading orders...</p>
+        </div>
+      </div>
+    </main>
+
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 1100"
+    ></div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" src="orders.js"></script>
+  </body>
+</html>

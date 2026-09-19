@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Account — ElectroShop</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light d-flex align-items-center min-vh-100 py-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="text-center mb-4">
+            <a
+              href="index.html"
+              class="text-decoration-none text-dark d-inline-flex align-items-center gap-2"
+            >
+              <i class="bi bi-cpu fs-2 text-primary"></i>
+              <span class="h3 fw-bold mb-0">ElectroShop</span>
+            </a>
+          </div>
+
+          <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-4">
+              <h4 class="card-title fw-bold mb-1 text-center">
+                Create Account
+              </h4>
+              <p class="text-muted small text-center mb-4">
+                Fill in the form below to get started
+              </p>
+
+              <form id="registerPageForm">
+                <div class="row g-2 mb-3">
+                  <div class="col">
+                    <label class="form-label small fw-semibold text-muted"
+                      >First name</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="firstname"
+                      id="registerFirstname"
+                      placeholder="John"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Your first name must be between 3 and 40 characters long
+                    </div>
+                  </div>
+                  <div class="col">
+                    <label class="form-label small fw-semibold text-muted"
+                      >Last name</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="lastname"
+                      id="registerLastname"
+                      placeholder="Doe"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Your last name must be between 3 and 40 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold text-muted"
+                    >Email address</label
+                  >
+                  <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    id="registerEmail"
+                    placeholder="name@example.com"
+                    required
+                  />
+                  <div class="invalid-feedback">Enter valid email</div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label small fw-semibold text-muted"
+                    >Password</label
+                  >
+                  <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    id="registerPassword"
+                    placeholder="Min. 8 characters"
+                    minlength="8"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Your password must be between 8 and 256 characters long
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-success w-100 py-2 fw-semibold"
+                >
+                  Create Account
+                </button>
+              </form>
+            </div>
+            <div class="card-footer bg-white border-0 text-center pb-4 pt-0">
+              <p class="small text-muted mb-0">
+                Already registered?
+                <a
+                  href="login.html"
+                  class="text-primary fw-semibold text-decoration-none"
+                  >Sign In</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <div
+    class="toast-container position-fixed top-0 end-0 p-3"
+    style="z-index: 1100"
+  ></div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"
+  ></script>
+
+  <script type="module" src="register.js"></script>
+</html>

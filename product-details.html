@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details | ElectroShop</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <header class="bg-white border-bottom py-3 mb-4 sticky-top">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          href="index.html"
+          class="text-decoration-none fw-bold fs-4 text-dark"
+        >
+          <i class="bi bi-cpu text-primary me-2"></i>ElectroShop
+        </a>
+        <div class="d-flex align-items-center gap-3">
+          <a href="index.html" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Catalog
+          </a>
+          <button
+            class="btn btn-outline-primary btn-sm position-relative"
+            id="openCart"
+            data-bs-toggle="modal"
+            data-bs-target="#cartModal"
+          >
+            <i class="bi bi-cart3"></i>
+            <span
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              id="cartBadge"
+            >
+              0
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mb-5">
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+          <li class="breadcrumb-item">
+            <a href="index.html" class="text-decoration-none">Catalog</a>
+          </li>
+          <li class="breadcrumb-item">
+            <span
+              id="productBreadcrumbCategory"
+              class="text-capitalize text-muted"
+              >Category</span
+            >
+          </li>
+          <li
+            class="breadcrumb-item active"
+            aria-current="page"
+            id="productBreadcrumbTitle"
+          >
+            Product
+          </li>
+        </ol>
+      </nav>
+
+      <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden">
+        <div class="card-body p-4 p-lg-5">
+          <div class="row g-4 align-items-start">
+            <div class="col-12 col-md-5 text-center">
+              <div
+                class="bg-white rounded-3 p-3 border d-flex align-items-center justify-content-center"
+                style="min-height: 380px"
+              >
+                <img
+                  id="productMainImage"
+                  src="https://via.placeholder.com/400"
+                  alt="Product Image"
+                  class="img-fluid rounded object-fit-contain"
+                  style="max-height: 360px"
+                />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-7">
+              <div
+                class="d-flex justify-content-between align-items-start gap-2 mb-2"
+              >
+                <span
+                  class="badge bg-primary-subtle text-primary fw-semibold text-uppercase"
+                  id="productCategoryBadge"
+                >
+                  Electronics
+                </span>
+                <span class="badge bg-success" id="productStatusBadge"
+                  >In Stock</span
+                >
+              </div>
+
+              <h2 class="fw-bold text-dark mb-2" id="productTitle">
+                Loading product...
+              </h2>
+              <p class="text-muted small mb-3">
+                Brand:
+                <span class="fw-semibold text-dark" id="productBrand">---</span>
+              </p>
+
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="text-warning small" id="productRatingStars">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                </div>
+                <span class="fw-bold small" id="productRatingValue">4.5</span>
+                <span class="text-muted small" id="productReviewsCount"
+                  >(0 reviews)</span
+                >
+              </div>
+
+              <div
+                class="p-3 bg-light rounded-3 mb-4 d-flex align-items-baseline gap-3"
+              >
+                <h2 class="fw-bold text-primary mb-0" id="productPrice">
+                  $0.00
+                </h2>
+                <span class="text-muted small"
+                  >Available: <strong id="productStock">0</strong> in
+                  stock</span
+                >
+              </div>
+
+              <div class="row g-2 align-items-center mb-4">
+                <div class="col-4 col-sm-3">
+                  <input
+                    type="number"
+                    id="productQuantityInput"
+                    class="form-control text-center"
+                    value="1"
+                    min="1"
+                    max="10"
+                  />
+                </div>
+                <div class="col-8 col-sm-9">
+                  <button
+                    class="btn btn-primary w-100 py-2 shadow-sm"
+                    id="addToCartBtn"
+                  >
+                    <i class="bi bi-bag-plus me-2"></i>Add to Cart
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-top pt-3">
+                <div class="row g-2 small text-muted">
+                  <div class="col-6">
+                    <i class="bi bi-truck me-2 text-primary"></i>Fast delivery
+                    (1-2 days)
+                  </div>
+                  <div class="col-6">
+                    <i class="bi bi-shield-check me-2 text-primary"></i>12-month
+                    official warranty
+                  </div>
+                  <div class="col-6">
+                    <i class="bi bi-arrow-repeat me-2 text-primary"></i>14-day
+                    easy return
+                  </div>
+                  <div class="col-6">
+                    <i class="bi bi-credit-card me-2 text-primary"></i>Secure
+                    checkout
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-bottom-0 pt-3 px-4">
+          <ul
+            class="nav nav-tabs card-header-tabs"
+            id="productDetailTabs"
+            role="tablist"
+          >
+            <li class="nav-item">
+              <button
+                class="nav-link active fw-semibold"
+                id="desc-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#desc-pane"
+                type="button"
+              >
+                Description
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link fw-semibold"
+                id="reviews-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#reviews-pane"
+                type="button"
+              >
+                Reviews (<span id="reviewsTabCount">0</span>)
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-body p-4 tab-content">
+          <div class="tab-pane fade show active" id="desc-pane">
+            <h5 class="fw-bold mb-3">About this product</h5>
+            <p class="text-secondary lh-lg mb-0" id="productFullDescription">
+              Loading description...
+            </p>
+          </div>
+
+          <div class="tab-pane fade" id="reviews-pane">
+            <div class="row g-4">
+              <div class="col-12 col-lg-7">
+                <h5 class="fw-bold mb-3">Customer Feedback</h5>
+                <div class="d-flex flex-column gap-3" id="reviewsListContainer">
+                  <p class="text-muted">
+                    No reviews yet. Be the first to leave one!
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-5">
+                <div class="card bg-light border-0 rounded-3 p-3">
+                  <h6 class="fw-bold mb-3">Write a Review</h6>
+                  <form id="reviewForm" novalidate>
+                    <div class="mb-3">
+                      <label class="form-label small fw-semibold"
+                        >Your Rating</label
+                      >
+                      <select
+                        class="form-select form-select-sm"
+                        id="reviewRating"
+                        required
+                      >
+                        <option value="5" selected>
+                          ⭐⭐⭐⭐⭐ (5 - Excellent)
+                        </option>
+                        <option value="4">⭐⭐⭐⭐ (4 - Good)</option>
+                        <option value="3">⭐⭐⭐ (3 - Average)</option>
+                        <option value="2">⭐⭐ (2 - Poor)</option>
+                        <option value="1">⭐ (1 - Terrible)</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label small fw-semibold"
+                        >Your Comment</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="reviewComment"
+                        rows="3"
+                        placeholder="What did you like or dislike about this product?"
+                        required
+                      ></textarea>
+                      <div class="invalid-feedback">
+                        Please enter a short comment (at least 5 characters).
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="btn btn-dark btn-sm w-100"
+                      id="submitReviewBtn"
+                    >
+                      Submit Review
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 1100"
+    ></div>
+
+    <div
+      class="modal fade"
+      id="cartModal"
+      tabindex="-1"
+      aria-labelledby="cartModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header border-bottom pb-3">
+            <h5 class="modal-title fw-bold" id="cartModalLabel">
+              <i class="bi bi-bag me-2 text-primary"></i>Shopping Cart
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-3">
+            <div id="cartItemsList" class="d-flex flex-column gap-2">
+              <!-- Динамічний список товарів -->
+            </div>
+          </div>
+          <div
+            class="modal-footer border-top d-flex justify-content-between align-items-center bg-light"
+          >
+            <div>
+              <small class="text-muted d-block">Total:</small>
+              <span class="fw-bold fs-5 text-primary" id="cartTotalPrice"
+                >$0.00</span
+              >
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary px-4 shadow-sm"
+              id="checkoutBtn"
+              disabled
+            >
+              Checkout <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module" src="product-details.js"></script>
+  </body>
+</html>

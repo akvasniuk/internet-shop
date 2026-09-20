@@ -1,4 +1,4 @@
-import { API_URL } from "../utils/api.js";
+import { API_URL, authFetch } from "../utils/api.js";
 
 export async function fetchProducts({
   page = 1,

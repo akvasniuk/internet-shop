@@ -6,7 +6,7 @@ export function handleForceLogout(redirectToLogin = true) {
   localStorage.removeItem("user");
 
   if (redirectToLogin) {
-    setTimeout(() => (window.location.href = "login.html"), 500);
+    setTimeout(() => (window.location.href = "login/login.html"), 500);
   }
 }
 
